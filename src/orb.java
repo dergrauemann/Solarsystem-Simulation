@@ -46,7 +46,7 @@ public class orb {
 		// both orbs are existent
 		if ((this!=null) && (second!=null)) {
 			
-			// distance per axe
+			// distance per axis
 			double diffx=second.position.x-this.position.x;
 			double diffy=second.position.y-this.position.y;
 			double diffz=second.position.z-this.position.z;
@@ -57,7 +57,7 @@ public class orb {
 			// acceleration based on gravitation
 			double a=sosim.GAMMA*(second.mass/Math.pow(r,2));
 			
-			// acceleration per axe
+			// acceleration per axis
 			this.acceleration.x=this.acceleration.x+a*diffx/r;
 			this.acceleration.y=this.acceleration.y+a*diffy/r;
 			this.acceleration.z=this.acceleration.z+a*diffz/r;

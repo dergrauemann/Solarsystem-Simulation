@@ -1,10 +1,12 @@
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.*;
 
-public class sosim extends Frame {
+public class sosim extends Frame implements KeyListener  {
 
 	BufferedImage image;
     Graphics buffer;
@@ -29,6 +31,13 @@ public class sosim extends Frame {
 	// in which time calculates
 	public static double delta=1;
 	
+	// which zoom
+	public static int zoom=200;
+
+	// rotation of the axis
+	public static int rotatex=90;
+	public static int rotatey=0;
+	
 	public sosim() {
   	  super( "galasim" );
   	  this.setSize(width,height);
@@ -49,8 +58,59 @@ public class sosim extends Frame {
 	      }
 	    }
 	  );
+  	  addKeyListener(this);
 	}
 
+    public void keyTyped(KeyEvent ke) {
+    }
+
+    public void keyPressed(KeyEvent ke) {
+        switch (ke.getKeyCode())
+        {
+        	// Page up zooms in
+	    	case 33: 	sosim.zoom*=2;
+	    				break;
+	    	// Page down zooms out
+	        case 34: 	sosim.zoom/=2;
+	        			break;
+	        // Arrow up rotates up (x-axis)
+	        case 38:	sosim.rotatex++;
+	        			if (sosim.rotatex>359) {
+	        				sosim.rotatex=0;
+	        			}
+	        			break;
+	        // Arrow down rotates down (x-axis)
+	        case 40:	sosim.rotatex--;
+	        			if (sosim.rotatex<0) {
+	        				sosim.rotatex=359;
+	        			}
+	        			break;
+   	        // Arrow up rotates left (y-axis)
+   	        case 37:	sosim.rotatey++;
+						if (sosim.rotatey>359) {
+							sosim.rotatey=0;
+						}
+   	        			break;
+   	        // Arrow down rotates right (y-axis)
+   	        case 39:	sosim.rotatey--;
+						if (sosim.rotatey<0) {
+							sosim.rotatey=359;
+						}
+   	        			break;
+	        // Keypad + speeds up
+		    case 107:	delta*=2;
+		    			break;
+		    // Keypad - slows down
+		    case 109:	delta/=2;
+		    			break;
+        }
+        repaint();
+        // System.out.println(ke.getKeyCode());
+    }
+
+    public void keyReleased(KeyEvent ke) {
+    }
+	
     public void update(Graphics g) {
 	    paint(g);
 	}
@@ -65,15 +125,30 @@ public class sosim extends Frame {
 
 		buffer.setColor(Color.white);
 		buffer.drawString(String.valueOf(Math.round(sosim.time))+" Days", 10, 60);
+		buffer.drawString(String.valueOf(Math.round(sosim.zoom))+" Zoom", 10, 80);
+		buffer.drawString(String.valueOf(Math.round(sosim.delta))+" Delta", 10, 100);
+		buffer.drawString(String.valueOf(Math.round(sosim.rotatex))+" Rotation X", 10, 120);
+		buffer.drawString(String.valueOf(Math.round(sosim.rotatey))+" Rotation Y", 10, 140);
 		
 		int i,x,y;
+		double px,py,pz,xx,yy;
 
 		// draw all orbs
 		for (i=0;i<amountorbs;i++) {
 		
-			x=(int)(width/2+(body[i].position.x/AE*200));
-			y=(int)(height/2+(body[i].position.y/AE*200));
-	
+			// calculate position in space
+			px=body[i].position.x/AE*sosim.zoom;
+			py=body[i].position.y/AE*sosim.zoom;
+			pz=body[i].position.z/AE*sosim.zoom;
+			
+			// calculate position on screen with rotation of the axis
+			xx=((px*Math.cos(sosim.rotatey*Math.PI/180)+pz*Math.sin(sosim.rotatey*Math.PI/180)));
+			yy=((py*Math.sin(sosim.rotatex*Math.PI/180)+pz*Math.cos(sosim.rotatex*Math.PI/180)));
+
+			// center the positions in window
+			x=(int)(width/2+xx);
+			y=(int)(height/2+yy);
+
 			buffer.setColor(body[i].color);
 			buffer.fillArc(x,y,3,3,0,360);
 		}
