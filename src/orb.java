@@ -1,3 +1,4 @@
+import java.awt.Color;
 
 public class orb {
 
@@ -8,6 +9,9 @@ public class orb {
 	
 	// Mass
 	double mass;
+	
+	// Color
+	Color color;
 	
 	// actual Position 
 	values position = new values(0,0,0);
@@ -36,122 +40,108 @@ public class orb {
 		return distance;
 	}
 	
-	// calculate distancex between two orbs
-	public double distancex(orb second) {
-		
-		double distancex=0.0;
-		
-		// both orbs are existent
-		if ((this!=null) && (second!=null)) {
-
-			// calculate distance between both orbs
-			distancex=Math.sqrt(Math.pow((this.position.x-second.position.x),2));				
-						
-		}
-		return distancex;
-	}
-	
-	// calculate distance between two orbs
-	public double distancey(orb second) {
-		
-		double distancey=0.0;
-		
-		// both orbs are existent
-		if ((this!=null) && (second!=null)) {
-
-			// calculate distance between both orbs
-			distancey=Math.sqrt(Math.pow((this.position.y-second.position.y),2));				
-						
-		}
-		return distancey;
-	}
-	
-	// calculate distance between two orbs
-	public double distancez(orb second) {
-		
-		double distancez=0.0;
-		
-		// both orbs are existent
-		if ((this!=null) && (second!=null)) {
-
-			// calculate distance between both orbs
-			distancez=Math.sqrt(Math.pow((this.position.z-second.position.z),2));				
-						
-		}
-		return distancez;
-	}
-	
 	// calculate acceleration between two orbs based on gravitation
 	public void acceleration(orb second) {
 		
+		// both orbs are existent
 		if ((this!=null) && (second!=null)) {
 			
-			double distance=this.distance(second);
+			// distance per axe
+			double diffx=second.position.x-this.position.x;
+			double diffy=second.position.y-this.position.y;
+			double diffz=second.position.z-this.position.z;
 
-			// Calculation of new accelartion is old acceleration + acceleration of gravitation from second orb "parted" to the axes (x,y,z)
-			this.acceleration.x=this.acceleration.x+sosim.GAMMA*(second.mass/Math.pow(distance,2))*(this.distancex(second)/distance);
-			this.acceleration.y=this.acceleration.y+sosim.GAMMA*(second.mass/Math.pow(distance,2))*(this.distancey(second)/distance);
-			this.acceleration.z=this.acceleration.z+sosim.GAMMA*(second.mass/Math.pow(distance,2))*(this.distancez(second)/distance);
+			// distance in space
+			double r=Math.sqrt(Math.pow(diffx,2)+Math.pow(diffy,2)+Math.pow(diffz,2));
 			
+			// acceleration based on gravitation
+			double a=sosim.GAMMA*(second.mass/Math.pow(r,2));
+			
+			// acceleration per axe
+			this.acceleration.x=this.acceleration.x+a*diffx/r;
+			this.acceleration.y=this.acceleration.y+a*diffy/r;
+			this.acceleration.z=this.acceleration.z+a*diffz/r;
 		}
+	}
+	
+	// clears all acceleration before calculation
+	public void accelerationclear() {
 		
+		// orb is existent
+		if (this!=null) {
+			
+			this.acceleration.x=0;
+			this.acceleration.y=0;
+			this.acceleration.z=0;
+		}
 	}
 
 	// calculate new position of orb based on acceleration, velocity and actual position
 	public void movement() {
 		
+		// orb is existent
 		if (this!=null) {
-			
-			// new position is 1/2*acceleration*t^2+velocity*t+position
-			this.position.x=0.5*this.acceleration.x*Math.pow(sosim.t, 2)+this.velocity.x*sosim.t+this.position.x;
-			this.position.y=0.5*this.acceleration.y*Math.pow(sosim.t, 2)+this.velocity.y*sosim.t+this.position.y;
-			this.position.z=0.5*this.acceleration.z*Math.pow(sosim.t, 2)+this.velocity.z*sosim.t+this.position.z;
 
+			// new position is 1/2*acceleration*t^2+velocity*t+position
+			this.position.x=this.position.x+0.5*this.acceleration.x*sosim.delta*sosim.delta+this.velocity.x*sosim.delta;
+			this.position.y=this.position.y+0.5*this.acceleration.y*sosim.delta*sosim.delta+this.velocity.y*sosim.delta;
+			this.position.z=this.position.z+0.5*this.acceleration.z*sosim.delta*sosim.delta+this.velocity.z*sosim.delta;
 		}
 	}
 		
 	// calculation of new velocity
 	public void velocity() {
-		
+
+		// orb is existent
 		if (this!=null) {
-
-			this.velocity.x=this.acceleration.x*sosim.t+this.velocity.x;
-			this.velocity.y=this.acceleration.y*sosim.t+this.velocity.y;
-			this.velocity.z=this.acceleration.z*sosim.t+this.velocity.z;
-
+			
+			// new velocity is actual velocity + velocity through acceleration*time
+			this.velocity.x=this.acceleration.x*sosim.delta+this.velocity.x;
+			this.velocity.y=this.acceleration.y*sosim.delta+this.velocity.y;
+			this.velocity.z=this.acceleration.z*sosim.delta+this.velocity.z;
 		}
 	}
  	
 	// standard Constructor
 	public orb() {
+
 		name="Noname";
 		mass=1;
 	}
 	
 	// Constructor with some Parameters (Position, Velocity)
-	public orb(String pname, double pmass, double px,double py,double pz, double pvx, double pvy, double pvz) {
+	public orb(String pname, double pmass, Color pcolor,double px,double py,double pz, double pvx, double pvy, double pvz) {
+
 		name=pname;
 		mass=pmass;
-		position.x=px;
-		position.y=py;
-		position.z=pz;
-		velocity.x=pvx;
-		velocity.y=pvy;
-		velocity.z=pvz;
+		color=pcolor;
+		
+		position.x=sosim.AE*px;
+		position.y=sosim.AE*py;
+		position.z=sosim.AE*pz;
+		
+		velocity.x=sosim.AE*pvx/86400;
+		velocity.y=sosim.AE*pvy/86400;
+		velocity.z=sosim.AE*pvz/86400;
 	}
 
 	// Constructor with full Parameters (Position, Velicity, Acceleration)
-	public orb(String pname, double pmass, double px,double py,double pz, double pvx, double pvy, double pvz, double pax,double pay,double paz) {
+	public orb(String pname, double pmass, Color pcolor,double px,double py,double pz, double pvx, double pvy, double pvz, double pax,double pay,double paz) {
+
 		name=pname;
 		mass=pmass;
-		position.x=px;
-		position.y=py;
-		position.z=pz;
-		velocity.x=pvx;
-		velocity.y=pvy;
-		velocity.z=pvz;
-		acceleration.x=pax;
-		acceleration.y=pay;
-		acceleration.z=paz;
+		color=pcolor;
+		
+		position.x=sosim.AE*px;
+		position.y=sosim.AE*py;
+		position.z=sosim.AE*pz;
+		
+		velocity.x=sosim.AE*pvx/86400;
+		velocity.y=sosim.AE*pvy/86400;
+		velocity.z=sosim.AE*pvz/86400;
+		
+		acceleration.x=sosim.AE*pax;
+		acceleration.y=sosim.AE*pay;
+		acceleration.z=sosim.AE*paz;
 	}
 }
