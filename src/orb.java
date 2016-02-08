@@ -32,6 +32,66 @@ public class orb {
 	// new Position
 	values newposition = new values(0,0,0);
 	
+	// is orb the sun ?
+	public boolean issun(){
+		if (this.type==0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	// is orb a planet ?
+	public boolean isplanet(){
+		if (this.type==1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	// is orb a moon ?
+	public boolean ismoon(){
+		if (this.type==2) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	// is orb a asteroid ?
+	public boolean isasteroid(){
+		if (this.type==3) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	// is orb a comet ?
+	public boolean iscomet(){
+		if (this.type==4) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	// is orb a probe ?
+	public boolean isprobe(){
+		if (this.type==5) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	// calculate distance between two orbs
 	public double distance(orb second) {
 		

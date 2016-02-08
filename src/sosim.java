@@ -16,7 +16,7 @@ public class sosim extends Frame implements KeyListener  {
     public int height=800;
     
     // how many orbs are there
-    public int amountorbs=9;
+    public int amountorbs=11;
     
     // array of orbs
     public orb[] body = new orb[amountorbs];
@@ -37,6 +37,12 @@ public class sosim extends Frame implements KeyListener  {
 	// which zoom
 	public double zoom=200;
 
+	// centerpoint of view
+	public int center=0;
+	
+	// time between tracking
+	public int timetrack=21600;
+	
 	// rotation of the axis
 	public int rotatex=90;
 	public int rotatey=0;
@@ -44,14 +50,21 @@ public class sosim extends Frame implements KeyListener  {
 	// show names
 	public boolean shownames=true;
 	
+	// show tracks
+	public boolean showtracks=true;
+
+	// show moons
+	public boolean showmoons=false;
+	
 	// pause or not
 	public boolean pause=false;
 
-	// show tracks
-	public boolean showtracks=true;
-	
 	// 2d Array of tracked positions
 	public values[][] track = new values[amountorbs][amounttracks];
+	
+	// Array of points to draw
+	public int[] pointx = new int[amounttracks];
+	public int[] pointy = new int[amounttracks];
 	
 	public sosim() {
   	  super( "sosim" );
@@ -85,6 +98,18 @@ public class sosim extends Frame implements KeyListener  {
 	    	// Page down zooms out
 	        case 34: 	zoom/=2;
 	        			break;
+	        // Pos1 increase tracking time
+	        case 36:	timetrack+=1000;
+	        			if (timetrack>21600) {
+	        				timetrack=21600;
+	        			}
+	        			break;
+	        // End decrease tracking time
+	        case 35:	timetrack-=1000;
+	        			if (timetrack<1000) {
+	        				timetrack=1000;
+	        			}
+	        			break;
 	        // Arrow up rotates up (x-axis)
 	        case 38:	rotatex++;
 	        			if (rotatex>359) {
@@ -109,6 +134,40 @@ public class sosim extends Frame implements KeyListener  {
 							rotatey=359;
 						}
    	        			break;
+   	        // 0 for sun
+	        case 48:	center=0;
+ 	        	        break;
+   	        // 1 for mercury
+   	        case 49:	center=1;
+   	        			break;
+	        // 2 for venus
+	        case 50:	center=2;
+	        			break;
+   	        // 3 for earth
+	        case 51:	center=3;
+	        			break;
+   	        // 4 for mars
+	        case 52:	center=4;
+	        			break;
+   	        // 5 for jupiter
+	        case 53:	center=5;
+	           			break;
+	        // 6 for saturn
+	        case 54:	center=6;
+	        			break;
+	        // 7 for uranus
+	        case 55:	center=7;
+	        			break;
+	        // 8 for neptune
+   	        case 56:	center=8;
+   	        			break;
+	        // M for Moons on/off
+	        case 77:	if (showmoons) {
+	        				showmoons=false;
+	        			} else {
+	        				showmoons=true;
+	        			}
+	        			break;
    	        // N for Names on/off
    	        case 78:	if (shownames) {
    	        				shownames=false;
@@ -116,12 +175,46 @@ public class sosim extends Frame implements KeyListener  {
    	        				shownames=true;
    	        			}
    	        			break;
-   	        // P for Pauses Simulation
+   	        // P for pauses Simulation
    	        case 80:	if (pause) {
    	        				pause=false;
    	        			} else {
    	        				pause=true;
    	        			}
+   	        			break;
+	        // T for showing Tracks or not
+	        case 84:	if (showtracks) {
+	        				showtracks=false;
+	        			} else {
+	        				showtracks=true;
+	        			}
+	        			break;
+   	        // keypad0 for sun
+	        case 96:	center=0;
+ 	        	        break;
+   	        // keypad1 for mercury
+   	        case 97:	center=1;
+   	        			break;
+	        // keypad2 for venus
+	        case 98:	center=2;
+	        			break;
+   	        // keypad3 for earth
+	        case 99:	center=3;
+	        			break;
+   	        // keypad4 for mars
+	        case 100:	center=4;
+	        			break;
+   	        // keypad5 for jupiter
+	        case 101:	center=5;
+	           			break;
+	        // keypad6 for saturn
+	        case 102:	center=6;
+	        			break;
+	        // keypad7 for uranus
+	        case 103:	center=7;
+	        			break;
+	        // keypad8 for neptune
+   	        case 104:	center=8;
    	        			break;
 	        // Keypad + speeds up
 		    case 107:	delta*=2;
@@ -131,7 +224,7 @@ public class sosim extends Frame implements KeyListener  {
 		    			break;
         }
         repaint();
-        // System.out.println(ke.getKeyCode());
+        System.out.println(ke.getKeyCode());
     }
 
     public void keyReleased(KeyEvent ke) {
@@ -154,10 +247,11 @@ public class sosim extends Frame implements KeyListener  {
 
 		buffer.setColor(Color.white);
 		buffer.drawString(String.valueOf(Math.round(time))+" Days", 10, 60);
-		buffer.drawString(String.valueOf(Math.round(zoom))+" Zoom", 10, 80);
+		buffer.drawString(String.valueOf(Math.round(zoom/200))+"x Zoom", 10, 80);
 		buffer.drawString(String.valueOf(Math.round(delta))+" Delta", 10, 100);
 		buffer.drawString(String.valueOf(Math.round(rotatex))+" Rotation X", 10, 120);
 		buffer.drawString(String.valueOf(Math.round(rotatey))+" Rotation Y", 10, 140);
+		buffer.drawString(String.valueOf(Math.round(timetrack/216))+"% Timetrack", 10, 160);
 		
 		int i,j,x,y;
 		double px,py,pz,xx,yy;
@@ -168,12 +262,14 @@ public class sosim extends Frame implements KeyListener  {
 		// draw all orbs
 		for (i=0; i<amountorbs; i++) {
 
+			buffer.setColor(body[i].color);
+
 			for (j=0; j<amounttracks;j++) {
 
 				// calculate position in space
-				px=track[i][j].x/AE*zoom;
-				py=track[i][j].y/AE*zoom;
-				pz=track[i][j].z/AE*zoom;
+				px=(track[i][j].x-track[center][0].x)/AE*zoom;
+				py=(track[i][j].y-track[center][0].y)/AE*zoom;
+				pz=(track[i][j].z-track[center][0].z)/AE*zoom;
 					
 				// calculate position on screen with rotation of the axis
 				xx=((px*Math.cos(rotatey*Math.PI/180)+pz*Math.sin(rotatey*Math.PI/180)));
@@ -183,14 +279,41 @@ public class sosim extends Frame implements KeyListener  {
 				x=(int)(width/2+xx);
 				y=(int)(height/2+yy);
 	
-				buffer.setColor(body[i].color);
-				buffer.fillArc(x,y,3,3,0,360);
-				
-				// Show Names
-				if ((shownames) && (j==0))
+				pointx[j]=x;
+				pointy[j]=y;
+			}
+
+			buffer.setColor(body[i].color);
+
+			if (showtracks) {
+
+				if ((body[i].ismoon() && showmoons) ||
+					(body[i].isplanet()) ||
+					(body[i].isprobe()) ||
+					(body[i].issun()) ) {
+
+					buffer.drawPolyline(pointx, pointy, amounttracks-1);
+				}
+			}
+
+			if ((body[i].ismoon() && showmoons) ||
+					(body[i].isplanet()) ||
+					(body[i].isprobe()) ||
+					(body[i].issun()) ) {
+
+				// draw orb
+				buffer.fillArc(pointx[0]-1,pointy[0]-1,3,3,0,360);
+	
+				if (shownames)
 		 		{
-		 			buffer.drawString(body[i].name,x+5,y);
-		 		}
+					buffer.drawString(body[i].name,pointx[0]+5,pointy[0]);
+				}
+			}
+
+			// if Pause show it :)
+			if (pause) {
+				buffer.setColor(Color.white);
+				buffer.drawString("PAUSED",(int)width/2-30,60);
 			}
 		}
 		
@@ -209,7 +332,7 @@ public class sosim extends Frame implements KeyListener  {
   		sosim sosim = new sosim();
 
   		// used for loop
-  		int i,j;
+  		int i,j,ttt;
   		
   		// Values taken from nasa.gov site. Date is 27.06.2013 00:00, will take actual values later :)
 		sosim.body[0]= new orb("Sun",1.9891E30, 0, Color.white, 0,0,0,0,0,0);
@@ -221,6 +344,8 @@ public class sosim extends Frame implements KeyListener  {
 		sosim.body[6]= new orb("Saturn",5.68319E26, 1, Color.lightGray, -7.540010716539238E+00,-6.304065689998531E+00,4.098038000540534E-01,3.270398159047236E-03,-4.293417354035670E-03,-5.570578741394238E-05);
 		sosim.body[7]= new orb("Uranus",86.8103E24, 1, Color.gray, 1.978345749120409E+01,3.229806669859318E+00,4.098038000540534E-01,-6.683046293613055E-04,3.697977117469523E-03,2.248162924927207E-05);
 		sosim.body[8]= new orb("Neptune",102.41E24, 1, Color.darkGray,2.680948346057039E+01,-1.342536540628716E+01,-3.412512458891169E-01,1.378211498927596E-03,2.824711826035513E-03,-8.975394572267962E-05);
+		sosim.body[9]= new orb("Moon",734.9E20, 2, Color.lightGray,9.631176569191406E-02,-1.016057414360765E+00,1.788513804213026E-04,1.723781465974138E-02,2.010805409466552E-03,-5.772724084383609E-06);
+		sosim.body[10]= new orb("Voyager 1",733, 5, Color.magenta,-2.637363252283945E+01,-9.864630535523268E+01,7.140822835838159E+01,-1.203564481477777E-03,-7.911988482147065E-03,5.716307810761908E-03);
 
 		sosim.repaint();
 
@@ -233,6 +358,8 @@ public class sosim extends Frame implements KeyListener  {
 				sosim.track[i][j].z=sosim.body[i].position.z;
 			}
 		}
+		
+		ttt=0;
 		
 		while (true) {
 			
@@ -268,19 +395,24 @@ public class sosim extends Frame implements KeyListener  {
 			
 				}
 
-				// "shift" all tracks
-				for (i=0; i<sosim.amountorbs; i++) {
-					
-					for (j=sosim.amounttracks-1;j>0;j--) {
-						sosim.track[i][j].x=sosim.track[i][j-1].x;
-						sosim.track[i][j].y=sosim.track[i][j-1].y;
-						sosim.track[i][j].z=sosim.track[i][j-1].z;
+				// when to track the current position 
+				if (ttt>sosim.timetrack) {
+					for (i=0; i<sosim.amountorbs; i++) {
+						
+						for (j=sosim.amounttracks-1;j>0;j--) {
+							sosim.track[i][j].x=sosim.track[i][j-1].x;
+							sosim.track[i][j].y=sosim.track[i][j-1].y;
+							sosim.track[i][j].z=sosim.track[i][j-1].z;
+						}
+						sosim.track[i][0].x=sosim.body[i].position.x;
+						sosim.track[i][0].y=sosim.body[i].position.y;
+						sosim.track[i][0].z=sosim.body[i].position.z;
 					}
-					sosim.track[i][0].x=sosim.body[i].position.x;
-					sosim.track[i][0].y=sosim.body[i].position.y;
-					sosim.track[i][0].z=sosim.body[i].position.z;
+					ttt=0;
 				}
-
+				
+				ttt++;
+				
 				// increase time
 				sosim.time+=sosim.delta/86400;
 			}
