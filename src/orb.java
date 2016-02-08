@@ -4,11 +4,18 @@ public class orb {
 
 	// Definition of needed variables of the orb
 
+    // Definition of some constants
+	public final static double GAMMA=6.674E-11;
+	public final double AE=149597870700.0;
+
 	// Name
 	String name;
 	
 	// Mass
 	double mass;
+	
+	// which kind of type: 0=sun, 1=orb, 2=moon, 3=asteroid, 4=comet, 5=probe
+	int type;
 	
 	// Color
 	Color color;
@@ -77,28 +84,28 @@ public class orb {
 	}
 
 	// calculate new position of orb based on acceleration, velocity and actual position
-	public void movement() {
+	public void movement(double delta) {
 		
 		// orb is existent
 		if (this!=null) {
 
 			// new position is 1/2*acceleration*t^2+velocity*t+position
-			this.position.x=this.position.x+0.5*this.acceleration.x*sosim.delta*sosim.delta+this.velocity.x*sosim.delta;
-			this.position.y=this.position.y+0.5*this.acceleration.y*sosim.delta*sosim.delta+this.velocity.y*sosim.delta;
-			this.position.z=this.position.z+0.5*this.acceleration.z*sosim.delta*sosim.delta+this.velocity.z*sosim.delta;
+			this.position.x=this.position.x+0.5*this.acceleration.x*delta*delta+this.velocity.x*delta;
+			this.position.y=this.position.y+0.5*this.acceleration.y*delta*delta+this.velocity.y*delta;
+			this.position.z=this.position.z+0.5*this.acceleration.z*delta*delta+this.velocity.z*delta;
 		}
 	}
 		
 	// calculation of new velocity
-	public void velocity() {
+	public void velocity(double delta) {
 
 		// orb is existent
 		if (this!=null) {
 			
 			// new velocity is actual velocity + velocity through acceleration*time
-			this.velocity.x=this.acceleration.x*sosim.delta+this.velocity.x;
-			this.velocity.y=this.acceleration.y*sosim.delta+this.velocity.y;
-			this.velocity.z=this.acceleration.z*sosim.delta+this.velocity.z;
+			this.velocity.x=this.acceleration.x*delta+this.velocity.x;
+			this.velocity.y=this.acceleration.y*delta+this.velocity.y;
+			this.velocity.z=this.acceleration.z*delta+this.velocity.z;
 		}
 	}
  	
@@ -107,41 +114,44 @@ public class orb {
 
 		name="Noname";
 		mass=1;
+		type=0;
 	}
 	
 	// Constructor with some Parameters (Position, Velocity)
-	public orb(String pname, double pmass, Color pcolor,double px,double py,double pz, double pvx, double pvy, double pvz) {
+	public orb(String pname, double pmass, int ptype, Color pcolor,double px,double py,double pz, double pvx, double pvy, double pvz) {
 
 		name=pname;
 		mass=pmass;
 		color=pcolor;
+		type=ptype;
 		
-		position.x=sosim.AE*px;
-		position.y=sosim.AE*py;
-		position.z=sosim.AE*pz;
+		position.x=AE*px;
+		position.y=AE*py;
+		position.z=AE*pz;
 		
-		velocity.x=sosim.AE*pvx/86400;
-		velocity.y=sosim.AE*pvy/86400;
-		velocity.z=sosim.AE*pvz/86400;
+		velocity.x=AE*pvx/86400;
+		velocity.y=AE*pvy/86400;
+		velocity.z=AE*pvz/86400;
 	}
 
 	// Constructor with full Parameters (Position, Velicity, Acceleration)
-	public orb(String pname, double pmass, Color pcolor,double px,double py,double pz, double pvx, double pvy, double pvz, double pax,double pay,double paz) {
+	public orb(String pname, double pmass, int ptype, Color pcolor,double px,double py,double pz, double pvx, double pvy, double pvz, double pax,double pay,double paz) {
 
 		name=pname;
 		mass=pmass;
 		color=pcolor;
+		type=ptype;
 		
-		position.x=sosim.AE*px;
-		position.y=sosim.AE*py;
-		position.z=sosim.AE*pz;
+		position.x=AE*px;
+		position.y=AE*py;
+		position.z=AE*pz;
 		
-		velocity.x=sosim.AE*pvx/86400;
-		velocity.y=sosim.AE*pvy/86400;
-		velocity.z=sosim.AE*pvz/86400;
+		velocity.x=AE*pvx/86400;
+		velocity.y=AE*pvy/86400;
+		velocity.z=AE*pvz/86400;
 		
-		acceleration.x=sosim.AE*pax;
-		acceleration.y=sosim.AE*pay;
-		acceleration.z=sosim.AE*paz;
+		acceleration.x=AE*pax;
+		acceleration.y=AE*pay;
+		acceleration.z=AE*paz;
 	}
 }

@@ -8,5 +8,9 @@ Page up to zoom in
 Page down to zoom out
 
 Cursor up/down rotates X-Axis
-Cursos left/right rotates Y-Axis
+Cursor left/right rotates Y-Axis
+
+N on/off show Names of Orbs
+
+P pauses Simulation
 
