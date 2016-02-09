@@ -1,10 +1,15 @@
 import java.awt.*;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Checkbox;
+import java.awt.CheckboxMenuItem;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.*;
+
+import javax.swing.KeyStroke;
 
 public class sosim extends Frame implements KeyListener  {
 
@@ -84,9 +89,34 @@ public class sosim extends Frame implements KeyListener  {
 	    }
 	  );
   	  addKeyListener(this);
+  	  
+  	  // add menubar
+  	  MenuBar bar = new MenuBar();
+  	  
+  	  // add menu
+  	  Menu menushow = new Menu("Show");
+
+  	  // add menuitems to menu
+  	  CheckboxMenuItem itemnames = new CheckboxMenuItem("Names");
+  	  itemnames.setState(shownames);
+  	  menushow.add(itemnames);
+
+  	  CheckboxMenuItem itemmoons = new CheckboxMenuItem("Moons");
+  	  itemmoons.setState(showmoons);
+  	  menushow.add(itemmoons);
+
+  	  CheckboxMenuItem itemtracks = new CheckboxMenuItem("Tracks");
+  	  itemtracks.setState(showtracks);
+  	  menushow.add(itemtracks);
+
+  	  // add menu to bar
+  	  bar.add(menushow);
+  	  
+  	  // set bar to window
+  	  this.setMenuBar(bar);
 	}
 
-    public void keyTyped(KeyEvent ke) {
+	public void keyTyped(KeyEvent ke) {
     }
 
     public void keyPressed(KeyEvent ke) {
@@ -246,12 +276,12 @@ public class sosim extends Frame implements KeyListener  {
 		buffer.fillRect(0, 0, width, height);
 
 		buffer.setColor(Color.white);
-		buffer.drawString(String.valueOf(Math.round(time))+" Days", 10, 60);
-		buffer.drawString(String.valueOf(Math.round(zoom/200))+"x Zoom", 10, 80);
-		buffer.drawString(String.valueOf(Math.round(delta))+" Delta", 10, 100);
-		buffer.drawString(String.valueOf(Math.round(rotatex))+" Rotation X", 10, 120);
-		buffer.drawString(String.valueOf(Math.round(rotatey))+" Rotation Y", 10, 140);
-		buffer.drawString(String.valueOf(Math.round(timetrack/216))+"% Timetrack", 10, 160);
+		buffer.drawString(String.valueOf(Math.round(time))+" Days", 10, height-120);
+		buffer.drawString(String.valueOf(Math.round(zoom/200))+"x Zoom", 10, height-100);
+		buffer.drawString(String.valueOf(Math.round(delta))+" Delta", 10, height-80);
+		buffer.drawString(String.valueOf(Math.round(rotatex))+" Rotation X", 10, height-60);
+		buffer.drawString(String.valueOf(Math.round(rotatey))+" Rotation Y", 10, height-40);
+		buffer.drawString(String.valueOf(Math.round(timetrack/216))+"% Timetrack", 10, height-20);
 		
 		int i,j,x,y;
 		double px,py,pz,xx,yy;
@@ -313,7 +343,7 @@ public class sosim extends Frame implements KeyListener  {
 			// if Pause show it :)
 			if (pause) {
 				buffer.setColor(Color.white);
-				buffer.drawString("PAUSED",(int)width/2-30,60);
+				buffer.drawString("PAUSED",(int)width/2-30,80);
 			}
 		}
 		
