@@ -4,6 +4,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Checkbox;
 import java.awt.CheckboxMenuItem;
+import java.awt.RadioButton;
+import java.awt.RadioButtonMenuItem;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.*;
@@ -94,6 +96,49 @@ public class sosim extends Frame implements KeyListener  {
   	  MenuBar bar = new MenuBar();
   	  
   	  // add menu
+  	  Menu menucenter = new Menu("Center");
+
+	  ButtonGroup centergroup = new ButtonGroup();
+
+  	  // add menuitems to menu
+  	  RadioButtonMenuItem itemsun = new RadioButtonMenuItem("Sun");
+  	  itemsun.setSelected(true);
+  	  centergroup.add(itemsun);
+  	  menucenter.add(itemsun);
+
+  	  RadioButtonMenuItem itemmercury = new RadioButtonMenuItem("Mercury");
+  	  centergroup.add(itemmecury);
+  	  menucenter.add(itemmercury);
+
+  	  RadioButtonMenuItem itemvenus = new RadioButtonMenuItem("Venus");
+  	  centergroup.add(itemvenus);
+  	  menucenter.add(itemvenus);
+
+  	  RadioButtonMenuItem itemearth = new RadioButtonMenuItem("Earth");
+  	  centergroup.add(itemearth);
+  	  menucenter.add(itemearth);
+
+  	  RadioButtonMenuItem itemmars = new RadioButtonMenuItem("Mars");
+  	  centergroup.add(itemmars);
+  	  menucenter.add(itemmars);
+
+  	  RadioButtonMenuItem itemjupiter = new RadioButtonMenuItem("Jupiter");
+  	  centergroup.add(itemjupiter);
+  	  menucenter.add(itemjupiter);
+
+  	  RadioButtonMenuItem itemsaturn = new RadioButtonMenuItem("Saturn");
+  	  centergroup.add(itemsaturn);
+  	  menucenter.add(itemsaturn);
+
+  	  RadioButtonMenuItem itemuranus = new RadioButtonMenuItem("Uranus");
+  	  centergroup.add(itemuranus);
+  	  menucenter.add(itemuranus);
+
+  	  RadioButtonMenuItem itemneptune = new RadioButtonMenuItem("Neptune");
+  	  centergroup.add(itemneptune);
+  	  menucenter.add(itemneptune);
+
+  	  // add menu
   	  Menu menushow = new Menu("Show");
 
   	  // add menuitems to menu
@@ -109,8 +154,56 @@ public class sosim extends Frame implements KeyListener  {
   	  itemtracks.setState(showtracks);
   	  menushow.add(itemtracks);
 
+  	  // add menu
+  	  Menu menuaction = new Menu("Action");
+
+  	  // add menuitems to menu
+  	  MenuItem itemrotatexinc = new MenuItem("RotateX increase");
+  	  menuaction.add(itemrotatexinc);
+
+  	  MenuItem itemrotatexdec = new MenuItem("RotateX -decrease");
+  	  menuaction.add(itemrotatexdec);
+
+  	  menuaction.addSeparator();
+
+  	  // add menuitems to menu
+  	  MenuItem itemrotateyinc = new MenuItem("RotateY increase");
+  	  menuaction.add(itemrotateyinc);
+
+  	  MenuItem itemrotateydec = new MenuItem("RotateY -decrease");
+  	  menuaction.add(itemrotateydec);
+
+  	  menuaction.addSeparator();
+
+  	  // add menuitems to menu
+  	  MenuItem itemzoomin = new MenuItem("Zoom in");
+  	  menuaction.add(itemzoomin);
+
+  	  MenuItem itemzoomout = new MenuItem("Zoom out");
+  	  menuaction.add(itemzoomout);
+
+  	  menuaction.addSeparator();
+
+  	  // add menuitems to menu
+  	  MenuItem itemtrackinc = new MenuItem("Tracking increase");
+  	  menuaction.add(itemtrackinc);
+
+  	  MenuItem itemtrackdec = new MenuItem("Tracking decrease");
+  	  menuaction.add(itemtrackdec);
+
+  	  menuaction.addSeparator();
+
+  	  // add menuitems to menu
+  	  MenuItem itemspeedinc = new MenuItem("Speed increase");
+  	  menuaction.add(itemspeedinc);
+
+  	  MenuItem itemspeeddec = new MenuItem("Speed decrease");
+  	  menuaction.add(itemspeeddec);
+
   	  // add menu to bar
+  	  bar.add(menucenter);
   	  bar.add(menushow);
+  	  bar.add(menuaction);
   	  
   	  // set bar to window
   	  this.setMenuBar(bar);
